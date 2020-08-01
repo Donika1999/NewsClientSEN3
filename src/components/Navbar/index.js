@@ -6,8 +6,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import colors from '../../utils/base-module';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import logo from './logo.png';
 import { logoutUser } from '../../redux/actions/userActions'
+import './nav.css';
 
 
 const useStyles = makeStyles(theme => ({
@@ -54,11 +55,6 @@ class NavBar extends Component {
 
     constructor() {
         super();
-        this.state = {
-            query: "",
-            data: [],
-            filteredData: []
-        };
         this.handleLogoutClick = this.handleLogoutClick.bind(this);
     }
 
@@ -67,80 +63,37 @@ class NavBar extends Component {
         this.props.logoutUser();
     }
 
-    handleInputChange = event => {
-        const query = event.target.value;
-
-        this.setState(prevState => {
-            const filteredData = prevState.data.filter(element => {
-                return element.name.toLowerCase().includes(query.toLowerCase());
-            });
-
-            return {
-                query,
-                filteredData
-            };
-        });
-    };
-
-    getSearchData = () => {
-        fetch(`http://localhost:4000/restaurants`) // search from field
-            .then(response => response.json())
-            .then(data => {
-                const { query } = this.state;
-                const filteredData = data.filter(element => {
-                    return element.name.toLowerCase().includes(query.toLowerCase());
-                });
-
-                this.setState({
-                    data,
-                    filteredData
-                });
-            });
-    };
-
-    UNSAFE_componentWillMount() {
-        this.getSearchData();
-    }
-
     render() {
-        const { user: { authenticated, creds: { handle } } } = this.props
+        const { user: { authenticated, creds: { handle, imageUrl } } } = this.props
         const userlink = `/user/${handle}`;
         return (
             <React.Fragment>
                 <AppBar color='inherit'>
                     <Toolbar>
-                        <Link to="/" style={{ textDecoration: 'none' }}><Typography variant="h6" style={{ color: colors.BASE_BLUE }} >Home</Typography></Link>
+                        <Link to="/"><img src={logo} alt="logo" className="nav-logo"></img></Link>
+                        <Link to="/" style={{ textDecoration: 'none' }}><h1 className="nav-title">News24x7</h1></Link>
                         <Grid
                             justify="space-between"
                             container
                             spacing={4}>
                             <Grid item>
-
                             </Grid>
-                            <Grid item style={{ marginTop: '8px' }} >
-                                <div className="searchForm">
-                                    <form>
-                                        <input
-                                            placeholder="Search for..."
-                                            value={this.state.query}
-                                            onChange={this.handleInputChange}
-                                        />
-                                    </form>
-                                    {/* How to show the filtered data*/}
-                                    <div>{this.state.filteredData.map(i => <p>{i.name}</p>)}</div>
-                                </div>
-                            </Grid>
-                            <Grid item style={{ padding: '0px' }}>
-                                <Link to="/help/faq" activestyle={{ color: 'black' }}><NavButton >Help</NavButton></Link>
+                            <Grid item style={{ padding: '0px', marginBottom: '10px' }}>
+                                <Link to="/about-us" className="nav-link" ><h3>About Us</h3></Link>
+                                <Link to="/help/faq" className="nav-link"><h3>Help</h3></Link>
                                 {authenticated ? (
                                     <span>
-                                        <Link to="/" activestyle={{ color: 'black' }}><NavButton onClick={this.handleLogoutClick} >Logout</NavButton></Link>
-                                        <Link to={userlink} activestyle={{ color: 'black' }}><AccountCircleIcon fontSize="large" style={{ verticalAlign: 'middle' }} /></Link>
+                                        <Link to="/" className="nav-link"><h3 onClick={this.handleLogoutClick} >Logout</h3></Link>
+                                        <Link to={userlink} className="nav-link">
+                                            <span>
+                                                <img src={imageUrl} alt="user" className="usershape" style={{ marginTop: '25px' }} />
+                                            </span>
+                                        </Link>
                                     </span>
                                 ) : (
                                         <span>
-                                            <Link to="/login" activestyle={{ color: 'black' }}><NavButton >Login</NavButton></Link>
-                                            <Link to="/signup" activestyle={{ color: 'black' }}><NavButton >Signup</NavButton></Link>
+                                            <Link to="/login" className="nav-link"><h3>Login</h3></Link>
+                                            <Link to="/signup" className="nav-link"><h3>Signup</h3></Link>
                                         </span>
 
                                     )}
